@@ -1,62 +1,84 @@
 const displayElm = document.querySelector(".display");
-const allBtns = document.querySelectorAll(".btn");
 
+const allBtns = document.querySelectorAll(".btn");
 let strToDisplay = "";
 
-const operators = ["%", "+", "-", "*", "/"];
+const operators = ["%", "/", "*", "-", "+"];
 
 let lastOperator = "";
 
-const audio = new Audio("./audio.mp3");
-allBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    displayElm.classList.remove("prank");
-    const value = btn.innerText;
-    if (value === "AC") {
-      strToDisplay = "";
-      display();
+const audio = new Audio("./aa.wav");
+
+const buttonAction = (value) => {
+  if (value === "AC") {
+    strToDisplay = "";
+    display();
+    return;
+  }
+
+  if (value === "=" || value === "Enter") {
+    // get the last character
+
+    const lc = strToDisplay[strToDisplay.length - 1];
+
+    // check if it is the operator
+    if (operators.includes(lc)) {
+      ///// if yes, then remove it and update the display
+      strToDisplay = strToDisplay.slice(0, -1);
+    }
+
+    return total();
+  }
+
+  if (value === "C") {
+    strToDisplay = strToDisplay.slice(0, -1);
+    return display(strToDisplay);
+  }
+
+  //operator is clicked
+  if (operators.includes(value)) {
+    lastOperator = value;
+    const lc = strToDisplay[strToDisplay.length - 1];
+    if (operators.includes(lc)) {
+      strToDisplay = strToDisplay.slice(0, -1);
+    }
+  }
+
+  // handle the . issues
+  if (value === ".") {
+    const lastOperatorIndex = strToDisplay.lastIndexOf(lastOperator);
+
+    const lastNumberSet = strToDisplay.slice(lastOperatorIndex);
+
+    if (lastNumberSet.includes(".")) {
       return;
     }
 
-    if (value === "=") {
-      //get the last character
-      //check if it is the operator
-      //if yes then remove it and update the display
-      //if not, do nothing
-      const lc = strToDisplay[strToDisplay.length - 1];
-      if (operators.includes(lc)) {
-        strToDisplay = strToDisplay.slice(0, -1);
-      }
-      return total();
+    if (!lastOperator && strToDisplay.includes(".")) {
+      return;
     }
+  }
 
-    if (value === "C") {
-      strToDisplay = strToDisplay.slice(0, -1);
-      return display(strToDisplay);
-    }
+  strToDisplay += value;
+  display(strToDisplay);
+};
 
-    if (operators.includes(value)) {
-      lastOperator = value;
-      const lc = strToDisplay[strToDisplay.length - 1];
-      if (operators.includes(lc)) {
-        strToDisplay = strToDisplay.slice(0, -1);
-      }
-    }
-    //if dot is there don't make it display  handle the dot issue
-    if (value === ".") {
-      const lastOperatorIndex = strToDisplay.lastIndexOf(lastOperator);
-      const lastNumberSet = strToDisplay.slice(lastOperatorIndex);
+//capture the kek press event
+document.addEventListener("keypress", (e) => {
+  const value = e.key;
+  if (e.code.includes("Key")) {
+    return;
+  }
 
-      if (lastNumberSet.includes(".")) {
-        return;
-      }
+  buttonAction(value);
+});
 
-      if (!lastOperator && strToDisplay.includes(".")) {
-        return;
-      }
-    }
-    strToDisplay += value;
-    display(strToDisplay);
+allBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    displayElm.classList.remove("prank");
+
+    const value = btn.innerText;
+    buttonAction(value);
   });
 });
 
