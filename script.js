@@ -6,8 +6,11 @@ let strToDisplay = "";
 const operators = ["%", "+", "-", "*", "/"];
 
 let lastOperator = "";
+
+const audio = new Audio("./audio.mp3");
 allBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
+    displayElm.classList.remove("prank");
     const value = btn.innerText;
     if (value === "AC") {
       strToDisplay = "";
@@ -62,7 +65,17 @@ const display = (str) => {
 };
 
 const total = () => {
-  const ttl = eval(strToDisplay).toFixed(2);
+  const extraVal = randomValue();
+  if (extraVal) {
+    displayElm.classList.add("prank");
+    audio.play();
+  }
+  const ttl = eval(strToDisplay) + extraVal;
   strToDisplay = ttl.toString();
   display(ttl);
+};
+
+const randomValue = () => {
+  const num = Math.round(Math.random() * 10);
+  return num <= 3 ? num : 0;
 };
