@@ -94,7 +94,7 @@ const total = () => {
   }
   const ttl = eval(strToDisplay) + extraVal;
   strToDisplay = ttl.toString();
-  display(ttl);
+  display(strToDisplay);
 };
 
 const randomValue = () => {
